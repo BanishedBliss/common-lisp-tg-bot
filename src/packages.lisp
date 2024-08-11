@@ -1,3 +1,3 @@
 (defpackage #:hunch-test-bot
-      (:use #:cl #:hunchentoot)
+      (:use #:cl)
       (:export #:main))
