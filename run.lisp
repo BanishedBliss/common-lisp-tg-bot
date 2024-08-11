@@ -1,0 +1,6 @@
+(pushnew (uiop:getcwd) ql:*local-project-directories*)
+(ql:quickload '(:hunchentoot :jonathan :drakma))
+(asdf:load-asd "hunch-test-bot.asd")
+(ql:quickload :hunch-test-bot)
+(in-package :hunch-test-bot)
+(main)
