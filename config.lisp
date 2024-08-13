@@ -1,4 +1,4 @@
-(in-package :hunch-test-bot)
+(in-package :telegram-bot-api)
 
 (defparameter *env* `(
     (:bot-api-key "7362297110:AAGh9fcnM8j-VMQ-zUF1dRkgy1tcSww1O7U"))

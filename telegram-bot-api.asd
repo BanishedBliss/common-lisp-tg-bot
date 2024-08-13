@@ -6,6 +6,6 @@
   :components ((:module "src"
                   :components ((:file "packages")
                                (:file "util")
-                               (:file "main")
-                               (:file "routes")))
+                               (:file "bot-api")
+                               (:file "main")))
                (:file "config")))

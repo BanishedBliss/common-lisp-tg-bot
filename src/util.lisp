@@ -1,4 +1,4 @@
-(in-package :hunch-test-bot)
+(in-package :telegram-bot-api)
 
 #| Sections:
     1. Env config logic
@@ -42,6 +42,9 @@
         (get-env :bot-api-key)
         api-route))
 
+(defun log-data (data)
+    "Writes data to log"
+    (prin1 data))
 
 #|    Rest   |#
 

@@ -1,4 +1,4 @@
-(in-package :hunch-test-bot)
+(in-package :telegram-bot-api)
 
 (defun main ()
     "Main entry point for the Telegram Bot server."
