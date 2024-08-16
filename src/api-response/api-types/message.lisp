@@ -29,7 +29,7 @@
 	 extracts command structure from message text."
 	(with-slots ((m-entities entities) (m-text text))
 			m-object
-		(loop for entity in m-entities
+		(loop for entity on m-entities
 			  when (and 
 						(eql "bot_command" (entity-type entity))
 						(eql 0 (offset entity))

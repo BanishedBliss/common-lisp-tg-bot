@@ -48,7 +48,7 @@
 	"Reads JSON results object and evaluates updates to lisp objects"
 	(let (update-list (getf (raw-plist response-plist) :|result|)) 
 		;; Push updates to api-response slot
-		(loop for update in update-list
+		(loop for update on update-list
 			do (push (make-instance 'update 
 									:update-type (first update)
 									:plist update)))
@@ -66,8 +66,8 @@
 		   (errors-plist (getf (raw-plist response-plist) :|errors|))
 		   (errors-descriptions (getf (raw-plist response-plist) :|descriptions|)))
 		;; Collect error codes and descriptions from JSON
-		(loop for (error-code error-cases) in errors-plist
-			do (loop for (error-case error-array) in error-cases
+		(loop for (error-code error-cases) on errors-plist
+			do (loop for (error-case error-array) on error-cases
 					do (push `(,error-code 
 							   ,error-case 
 							   ,(getf errors-descriptions error-case)) 

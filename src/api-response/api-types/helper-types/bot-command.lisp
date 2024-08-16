@@ -5,9 +5,9 @@
 	command
 	text)
 
-(defun extract-command (message-text message-entity)
+(defun extract-command (message-text enitity-length)
 	(%extract-command 
 		:command (values (intern 
-					(subseq message-text 0 (entity-length message-entity)) 
+					(subseq message-text 1 enitity-length) 
 					"KEYWORD"))
-		:text (subseq m-text (1+ (entity-length entity)))))
+		:text (subseq message-text (1+ enitity-length))))

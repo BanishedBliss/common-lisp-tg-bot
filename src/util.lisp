@@ -22,7 +22,7 @@
     "Initializes config variables. 
      Should be called before server starts."
 
-    (loop for key-value-pair in *env*
+    (loop for key-value-pair on *env*
         do (set-config key-value-pair))
     (makunbound '*env*))
 
