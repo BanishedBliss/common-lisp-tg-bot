@@ -4,7 +4,7 @@
 	(log-data (format nil "Update of type ~A was received and not handled." update-type)))
 
 (defmethod eval-update-hooks ((update-type (eql :|message|)) 
-                        update-plist)
+                               update-plist)
 	"Evaluates updates of Message type. 
 	 Sets update's type-object slot value to Message object."	
     (let ((bot-command-length (get-bot-command-length 
@@ -12,11 +12,13 @@
         (if bot-command-length 
             (let ((bot-command (extract-command 
                                     (getf update-plist :|text|)
-                                    (getf bot-command-length :|length|))))
-                (return-from eval-update 
-                    (on-command update-plist
-                                (command bot-command) 
-                                (text bot-command)))))))
+                                    (getf bot-command-length :|length|)))) 
+                (on-command update-plist
+                            (command bot-command) 
+                            (text bot-command)))
+            (let ((message-text (getf update-plist :|text|)))
+                (when (< 0 (length message-text))
+                    (reply message-text))))))
 
 (defgeneric on-command (update-plist command text))
 
