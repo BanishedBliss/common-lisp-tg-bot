@@ -27,9 +27,9 @@
 		(get-api-url "sendMessage")
 		:method :post
 		:parameters `(("text" . ,text)
-                      ("chat_id" . ,(getf (getf *current-update*  
-														:|chat|) 
-														:|id|)))))
+                      ("chat_id" . ,(write-to-string (getf (getf *current-update*  
+                                                                    :|chat|) 
+                                                                    :|id|))))))
 
 (defun send-message (chat-id text parameters)
     "Receives chat-id and text for message. 
