@@ -1,9 +1,9 @@
 (in-package :tg-bot-api)
 
-(defmethod eval-update ((update-type t) update-plist)
+(defmethod eval-update-hooks ((update-type t) update-plist)
 	(log-data (format nil "Update of type ~A was received and not handled." update-type)))
 
-(defmethod eval-update ((update-type (eql :|message|)) 
+(defmethod eval-update-hooks ((update-type (eql :|message|)) 
                         update-plist)
 	"Evaluates updates of Message type. 
 	 Sets update's type-object slot value to Message object."	
