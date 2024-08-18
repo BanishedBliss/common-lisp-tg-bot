@@ -39,7 +39,7 @@
 				(cond ((getf response-data :is-ok)
 							;; Evaluate updates on successful poll
 							(cond 
-								((getf response-data :has-resuls)
+								((getf response-data :has-results)
 									(setf last-update-id (eval-updates response-plist)))
 								(t 
 									(log-data "No results received."))))
