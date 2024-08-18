@@ -60,18 +60,24 @@
 					:is-ok nil 
 					:has-results nil)))
 
-		(loop for (indicator value) on response-plist by #'cddr
+		(loop :for  (indicator value) on response-plist by #'cddr
 			  ;; If successful response:
-			  when  (eql indicator :|ok|)
-			  do    (progn 
+			  :when (eql indicator :|ok|)
+			  :do   (progn 
 			  		    (setf (getf checks :has-ok) t)
 			  		    (when (eql value t)
 			  		    	(setf (getf checks :is-ok) t)))
+			  :end
 			  ;; If any results:
-			  when  (and (eql indicator :|result|)
-			  			(listp value)
-			  			(< 0 (length value)))
-			  do    (setf (getf checks :has-results) t))
+			  :when (and (eql indicator :|result|)
+			  			 (listp value)
+			  			 (< 0 (length value)))
+			  :do   (progn
+			  			(print "Results found!")
+						(terpri)
+			  			(prin1 value)
+					 	(setf (getf checks :has-results) t))
+			  :end)
 
 		checks))
 
