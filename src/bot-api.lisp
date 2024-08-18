@@ -32,21 +32,21 @@
 	"Reads the incoming long poll response: 
      checks for response validity/errors, 
      proceeds to an appropriate action."
-	(let ((response-data (check-integrity response-plist))
-          (last-update-id nil))
+	(let ((response-data (check-integrity response-plist)))
 
 		(cond ((getf response-data :has-ok) 
 				(cond ((getf response-data :is-ok)
 							;; Evaluate updates on successful poll
 							(cond 
 								((getf response-data :has-results)
-									(setf last-update-id (eval-updates response-plist)))
+									(setf (getf response-data :last-update-id) 
+									      (eval-updates response-plist)))
 								(t 
 									(log-data "No results received."))))
 					  (t (log-errors response-plist))))
 		  (t (log-data "Received malformed JSON-response while long polling.")))
         
-        last-update-id))
+        response-data))
 
 (defun check-integrity (response-plist)
 	"Runs checks for valid JSON received, success/faliure and presence of new updates.

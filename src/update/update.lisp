@@ -13,10 +13,14 @@
             (let ((bot-command (extract-command 
                                     (getf update-plist :|text|)
                                     (getf bot-command-length :|length|)))) 
+                (print "Debug 1")
+                (prin1 bot-command-length)
                 (on-command update-plist
                             (command bot-command) 
                             (text bot-command)))
             (let ((message-text (getf update-plist :|text|)))
+                (print "Debug 2")
+                (prin1 bot-command-length)
                 (when (< 0 (length message-text))
                     (reply message-text))))))
 
