@@ -15,7 +15,12 @@
 
             ;; Read response and modify offset parameter to get next updates.
             (let ((response-data (read-updates parsed-plist)))
+				(print "Response-data log:")
+				(terpri)
+				(prin1 response-data)
+				(terpri)
                 (when (getf response-data :has-results)
+					(print "Check passed.")
                     (setf offset 
                         (1+ (getf response-data :last-update-id)))))))))
 

@@ -14,6 +14,10 @@
 
 (defun get-bot-command-length (entities-plist)
     "Looks through message entities array and returns bot command length or nil if none found."
+	(print "Debug get-bot-command-length:")
+	(terpri)
+	(prin1 entities-plist)
+	(terpri)
 	(loop for array-element in entities-plist
 		when (eql (getf array-element :|type|) "bot_command")
 		return (getf array-element :|length|)))

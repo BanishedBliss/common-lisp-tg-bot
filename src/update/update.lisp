@@ -20,7 +20,9 @@
                             (text bot-command)))
             (let ((message-text (getf update-plist :|text|)))
                 (print "Debug 2")
+                (terpri)
                 (prin1 bot-command-length)
+                (terpri)
                 (when (< 0 (length message-text))
                     (reply message-text))))))
 
