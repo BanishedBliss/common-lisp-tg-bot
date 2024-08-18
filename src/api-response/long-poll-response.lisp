@@ -13,8 +13,8 @@
 		:initform 0)
 	 (has-ok :initform nil)
 	 (is-ok :initform nil)
-	 (has-results :initform nil :accessor has-results))
-	 (:documentation ""))
+	 (has-results :initform '() :accessor any-results))
+	(:documentation ""))
 
 (defmethod analyze-plist ((response-plist long-poll-response))
 	"Reads JSON's basic information about request"
@@ -32,26 +32,34 @@
 	(when (and (eql indicator :|result|)
 			   (listp value)
 			   (< 0 (length value)))
-		(setf (has-results response-plist) t)))
+		(setf (any-results response-plist) t)))
 
 (defmethod eval-plist ((response-plist long-poll-response))
 	"Reacts to the type of response received"
 	(cond ((slot-value response-plist 'has-ok) 
 				(cond ((slot-value response-plist 'is-ok)
 							;; Evaluate updates on successful poll
-							(when (slot-value response-plist 'has-resuls)
-								(eval-updates response-plist)))
+							
+							(cond 
+								((slot-value response-plist 'has-resuls)
+									(eval-updates response-plist))
+								(t 
+									(telegram-bot-api:log-data "No results received.")))
+									
+								(print "Happened.")
+									)
 					  (t (log-errors response-plist))))
 		  (t (telegram-bot-api:log-data "Received malformed JSON-response while long polling."))))
 
 (defmethod eval-updates ((response-plist long-poll-response))
 	"Reads JSON results object and evaluates updates to lisp objects"
-	(let (update-list (getf (raw-plist response-plist) :|result|)) 
+	(let ((update-list (getf (raw-plist response-plist) :|result|)))
 		;; Push updates to api-response slot
-		(loop for update on update-list
+		(loop for update on update-list by #'cddr
 			do (push (make-instance 'update 
 									:update-type (first update)
-									:plist update)))
+									:plist update)
+					 (updates response-plist)))
 		;; Take note of the last update's ID
 		(setf (last-update-id response-plist) 
 			(getf (first (updates response-plist)) 
@@ -66,12 +74,12 @@
 		   (errors-plist (getf (raw-plist response-plist) :|errors|))
 		   (errors-descriptions (getf (raw-plist response-plist) :|descriptions|)))
 		;; Collect error codes and descriptions from JSON
-		(loop for (error-code error-cases) on errors-plist
-			do (loop for (error-case error-array) on error-cases
+		(loop for (error-code error-cases) on errors-plist by #'cddr
+			do (loop for (error-case error-array) on error-cases by #'cddr
 					do (push `(,error-code 
 							   ,error-case 
 							   ,(getf errors-descriptions error-case)) 
 							error-entries)))
 		;; Log errors collected
-		(telegram-bot-api:log data 
+		(telegram-bot-api:log-data 
 					(format nil "~{Error: ~S - ~S - ~S~^~%~}" error-entries))))

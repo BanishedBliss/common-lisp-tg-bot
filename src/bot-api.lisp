@@ -7,14 +7,14 @@
         (let* ((api-answer  (get-updates-request offset))
                (parsed-plist (jonathan:parse 
                              (flexi-streams:octets-to-string api-answer))))
-            
+
             (print "Parsed plist:")
             (prin1 parsed-plist)
 
             ;; Read response, modifies offset parameter to get next updates.
             (let ((response-object 
                    (api-response:read-updates parsed-plist)))
-                (when (has-results response-object)
+                (when (api-response:any-results response-object)
                     (setf offset 
                         (1+ (last-update-id response-object)))))))))
 

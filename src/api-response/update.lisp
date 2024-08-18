@@ -1,5 +1,7 @@
 (in-package :api-response)
 
+(defparameter *current-update* nil)
+
 (defclass update (has-raw-plist)
 	((update-type
 		:accessor update-type
@@ -8,7 +10,8 @@
 	 	:accessor type-object
 	 	:initform nil)))
 
-(defmethod initialize-instance :after ((update-inst update))
+(defmethod initialize-instance :after ((update-inst update) &rest args)
+	(setf *current-update* update-inst)
 	(eval-update update-inst (update-type update-inst)))
 
 (defgeneric eval-update (update-inst update-type))
@@ -27,8 +30,9 @@
 				(let ((bot-command (extract-command 
 										(getf message-plist :|text|)
 										(getf bot-command-length :|length|))))
-					(return from eval-update 
-						(on-command (command bot-command) 
+					(return-from eval-update 
+						(on-command update-inst
+									(command bot-command) 
 							    	(text bot-command))))))
 
 		
@@ -47,23 +51,35 @@
 		))
 
 (defun get-bot-command-length (plist-array)
-	(loop for array-element on plist-array
+	(loop for array-element on plist-array by #'cddr
 		when (eql (getf array-element :|type|) "bot_command")
 		return (getf array-element :|length|)))
 
 
 (defun plist-key-exists (key plist) 
 	"Determines if plist has the given key (non-recursively)."
-	(loop for (indicator value) on plist
+	(loop for (indicator value) on plist by #'cddr
 		when (eql indicator key)
 		return t))
 
-#| 
-(defmethod has-command ((update-inst update))
-	"Checks if message has an entity 'bot_command'"
-	(string= 
-		"bot_command"
-		(getf (first 
-				(getf (raw-plist update-rec) :|entities|)) 
-			:|type|)))
-|#
+(defgeneric on-command (update command text))
+
+(defun reply (text)
+	(drakma:http-request
+		(telegram-bot-api:get-api-url "sendMessage")
+		:method :post
+		:parameters `(("chat_id" . ,(getf (getf (getf *current-update* 
+														:|message|) 
+														:|chat|) 
+														:|id|))
+					  ("text" . ,text))))
+
+
+(defun get-updates-request (offset) 
+    "Sends request to Telegram Bot API to receive latest bot updates."
+    (drakma:http-request 
+        (concatenate 'string (get-api-url "getUpdates")
+                             "?timeout=5&offset="
+                             (write-to-string offset))
+        :method :get
+        :connection-timeout 15))

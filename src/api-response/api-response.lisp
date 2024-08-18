@@ -2,9 +2,9 @@
 
 (defun read-updates (parsed-plist)
 	"Reads the incoming long poll response, fires update hooks and returns the response object for further management."
-	(let (response-object (make-instance 
+	(let ((response-object (make-instance 
 							'long-poll-response 
-							:plist parsed-plist))
+							:plist parsed-plist)))
 		(analyze-plist response-object)
 		(eval-plist response-object)
 		response-object))

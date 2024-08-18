@@ -1,7 +1,9 @@
 (in-package :telegram-bot-api)
 
 (defparameter *env* `(
-    (:bot-api-key "7362297110:AAGh9fcnM8j-VMQ-zUF1dRkgy1tcSww1O7U"))
+    (:bot-api-key "7362297110:AAGh9fcnM8j-VMQ-zUF1dRkgy1tcSww1O7U")
+    (:test "111")
+    )
 )
 
 #| Restart server after making changes to *env*

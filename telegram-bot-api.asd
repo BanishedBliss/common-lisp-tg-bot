@@ -6,6 +6,14 @@
   :components ((:module "src"
                   :components ((:file "packages")
                                (:file "util")
+                               (:module "api-response"
+                                  :components ((:module "abstract"
+                                                  :components ((:file "has-raw-plist")))
+                                               (:module "api-types"
+                                                  :components ((:file "bot-command")))
+                                               (:file "api-response")
+                                               (:file "long-poll-response")
+                                               (:file "update")))
                                (:file "bot-api")
                                (:file "main")))
                (:file "config")))
