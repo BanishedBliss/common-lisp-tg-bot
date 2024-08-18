@@ -59,6 +59,10 @@
 	(let ((checks '(:has-ok nil 
 					:is-ok nil 
 					:has-results nil)))
+		(print "Integrity preprint: ")
+		(terpri)
+		(prin1 checks)
+		(terpri)
 
 		(loop :for  (indicator value) on response-plist by #'cddr
 			  ;; If successful response:
@@ -76,8 +80,14 @@
 			  			(print "Results found!")
 						(terpri)
 			  			(prin1 value)
+						(terpri)
 					 	(setf (getf checks :has-results) t))
 			  :end)
+
+		(print "Integrity postprint: ")
+		(terpri)
+		(prin1 checks)
+		(terpri)
 
 		checks))
 
@@ -93,10 +103,12 @@
                      update-id) 
             :in updates-list
 			:do (push update-id updates-ids)
+			:do (format t "Update ID: ~A~%" update-id)
             :do (setf *current-update* update-plist)
             :do (eval-update-hooks update-type update-plist))
 		
         (setf *current-update* nil)
+		(prin1 updates-ids)
         (first updates-ids)))
 
 (defun log-errors (response-plist)
