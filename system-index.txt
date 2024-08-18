@@ -1,1 +1,1 @@
-telegram-bot-api.asd
+tg-bot-api.asd

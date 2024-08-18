@@ -1,4 +1,6 @@
-(in-package :telegram-bot-api)
+;;; Contains configuration to start the application with.
+
+(in-package :tg-bot-api)
 
 (defparameter *env* `(
     (:bot-api-key "7362297110:AAGh9fcnM8j-VMQ-zUF1dRkgy1tcSww1O7U")

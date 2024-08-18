@@ -28,3 +28,11 @@ From theese types derive connections to be generalized and utilized in the event
 Creation of two similar hooks is imposible for the task of 
 passing overlaping but separate datasets to different functions.
 One would simply add second needed data set to the task registered.
+
+
+#| List of field name I had to replace:
+     1. Message - quote 		=> quote_of
+	 2. MessageEntity - type	=> entity_type
+	 3. MessageEntity - length 	=> entity_length
+	 4. Chat - type				=> chat_type
+|#

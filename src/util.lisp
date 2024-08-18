@@ -1,4 +1,4 @@
-(in-package :telegram-bot-api)
+(in-package :tg-bot-api)
 
 #| Sections:
     1. Env config logic
@@ -45,9 +45,11 @@
 
 #|    Rest   |#
 
+#| 
 (defun path-from-app-root (path)
     "Get absolute path from the application's root directory.
      Path parameter should be a strings with a trailing slash, i.e. src/www/"
     (asdf:system-relative-pathname
         "hunch-test-bot"
         path))
+|#
