@@ -1,7 +1,7 @@
 (in-package :tg-bot-api)
 
 (defmethod eval-update ((update-type t) update-plist)
-	(tg-bot-api:log-data (format nil "Update of type ~A was received and not handled." update-type)))
+	(log-data (format nil "Update of type ~A was received and not handled." update-type)))
 
 (defmethod eval-update ((update-type (eql :|message|)) 
                         update-plist)
@@ -22,7 +22,7 @@
 
 (defun reply (text)
 	(drakma:http-request
-		(tg-bot-api:get-api-url "sendMessage")
+		(get-api-url "sendMessage")
 		:method :post
 		:parameters `(("text" . ,text)
                       ("chat_id" . ,(getf (getf *current-update*  
@@ -33,7 +33,7 @@
     "Receives chat-id and text for message. 
      Also receives parameters pairlis, containing fields in sendMessage API reference."
     (drakma:http-request
-		(tg-bot-api:get-api-url "sendMessage")
+		(get-api-url "sendMessage")
 		:method :post
 		:parameters `(("text" . ,text)
                       ("chat_id" . ,chat-id)
