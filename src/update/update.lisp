@@ -12,21 +12,18 @@
         (if bot-command-length 
             (let ((bot-command (extract-command 
                                     (getf update-plist :|text|)
-                                    (getf bot-command-length :|length|)))) 
-                (print "Debug 1")
-                (prin1 bot-command-length)
+                                     bot-command-length))) 
                 (on-command update-plist
-                            (command bot-command) 
-                            (text bot-command)))
+                            (bot-command-name bot-command) 
+                            (bot-command-text bot-command)))
             (let ((message-text (getf update-plist :|text|)))
-                (print "Debug 2")
-                (terpri)
-                (prin1 bot-command-length)
-                (terpri)
                 (when (< 0 (length message-text))
                     (reply message-text))))))
 
 (defgeneric on-command (update-plist command text))
+
+(defmethod no-applicable-method (on-command &rest rest)
+    (reply "Я не знаю такую команду."))
 
 (defun reply (text)
 	(drakma:http-request

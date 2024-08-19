@@ -1,5 +1,6 @@
 (in-package :tg-bot-api)
 
+(setf drakma:*drakma-default-external-format* :UTF8)
 (defparameter *current-update* nil)
 
 (defun long-poll-updates ()
@@ -15,12 +16,7 @@
 
             ;; Read response and modify offset parameter to get next updates.
             (let ((response-data (read-updates parsed-plist)))
-				(print "Response-data log:")
-				(terpri)
-				(prin1 response-data)
-				(terpri)
                 (when (getf response-data :has-results)
-					(print "Check passed.")
                     (setf offset 
                         (1+ (getf response-data :last-update-id)))))))))
 
@@ -56,13 +52,9 @@
 (defun check-integrity (response-plist)
 	"Runs checks for valid JSON received, success/faliure and presence of new updates.
 	 Returns a plist of checks passed/failed."
-	(let ((checks '(:has-ok nil 
-					:is-ok nil 
-					:has-results nil)))
-		(print "Integrity preprint: ")
-		(terpri)
-		(prin1 checks)
-		(terpri)
+	(let ((checks (list :has-ok nil 
+						:is-ok nil 
+						:has-results nil)))
 
 		(loop :for  (indicator value) on response-plist by #'cddr
 			  ;; If successful response:
@@ -71,23 +63,11 @@
 			  		    (setf (getf checks :has-ok) t)
 			  		    (when (eql value t)
 			  		    	(setf (getf checks :is-ok) t)))
-			  :end
 			  ;; If any results:
 			  :when (and (eql indicator :|result|)
 			  			 (listp value)
 			  			 (< 0 (length value)))
-			  :do   (progn
-			  			(print "Results found!")
-						(terpri)
-			  			(prin1 value)
-						(terpri)
-					 	(setf (getf checks :has-results) t))
-			  :end)
-
-		(print "Integrity postprint: ")
-		(terpri)
-		(prin1 checks)
-		(terpri)
+			  :do   (setf (getf checks :has-results) t))
 
 		checks))
 
@@ -103,12 +83,10 @@
                      update-id) 
             :in updates-list
 			:do (push update-id updates-ids)
-			:do (format t "Update ID: ~A~%" update-id)
-            :do (setf *current-update* update-plist)
+	        :do (setf *current-update* update-plist)
             :do (eval-update-hooks update-type update-plist))
 		
         (setf *current-update* nil)
-		(prin1 updates-ids)
         (first updates-ids)))
 
 (defun log-errors (response-plist)

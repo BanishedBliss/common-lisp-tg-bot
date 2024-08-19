@@ -4,5 +4,5 @@
 (defmethod on-command (update-plist 
                        (command (eql :start))
                        text)
-    (declaim (ignorable text))
+    (declare (ignorable text))
     (reply "It worked!"))
