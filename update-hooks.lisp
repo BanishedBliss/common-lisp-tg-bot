@@ -5,4 +5,4 @@
                        (command (eql :start))
                        text)
     (declare (ignorable text))
-    (reply "It worked!"))
+    (reply "Бот работает!"))
