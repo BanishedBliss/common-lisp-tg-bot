@@ -18,28 +18,29 @@
                             (bot-command-text bot-command)))
             (let ((message-text (getf update-plist :|text|)))
                 (when (< 0 (length message-text))
-                    (reply message-text))))))
+                    (text-back message-text))))))
 
 (defgeneric on-command (update-plist command text))
 
 (defmethod no-applicable-method (on-command &rest rest)
-    (reply "Я не знаю такую команду."))
+    (text-back "Я не знаю такую команду."))
 
-(defun reply (text)
-	(drakma:http-request
-		(get-api-url "sendMessage")
-		:method :post
-		:parameters `(("text" . ,text)
-                      ("chat_id" . ,(write-to-string (getf (getf *current-update*  
+(defun get-chat-id (update-plist)
+    (getf (getf update-plist :|chat|) :|id|))
+
+(defun text-back (text)
+    "Sends plain text to the current update's chat.
+     Does not reply to the actual message received."
+	(send-json-to-route "sendMessage"
+        `(:|text| ,text 
+          :|chat_id| ,(write-to-string 
+                            (getf (getf *current-update*  
                                                                     :|chat|) 
-                                                                    :|id|))))))
+                                                :|id|)))))
 
 (defun send-message (chat-id text parameters)
     "Receives chat-id and text for message. 
-     Also receives parameters pairlis, containing fields in sendMessage API reference."
-    (drakma:http-request
-		(get-api-url "sendMessage")
-		:method :post
-		:parameters `(("text" . ,text)
-                      ("chat_id" . ,chat-id)
-                      ,parameters)))
+     Also receives parameters plist, containing fields in sendMessage API reference."
+    (send-json-to-route "sendMessage"
+        (merge-plist `(:|chat_id| ,chat-id :|text| ,text) 
+                      parameters)))

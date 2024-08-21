@@ -3,8 +3,7 @@
 (in-package :tg-bot-api)
 
 (defparameter *env* `(
-    (:bot-api-key "7362297110:AAGh9fcnM8j-VMQ-zUF1dRkgy1tcSww1O7U")
-    (:test "111")
+        (:bot-api-key "7362297110:AAGh9fcnM8j-VMQ-zUF1dRkgy1tcSww1O7U")
     )
 )
 
@@ -12,3 +11,12 @@
 
 :bot-api-key    - A string. Get one via Telegram Bot @BotFather
 |#
+
+(defun set-my-commands () 
+    (send-json-to-route "setMyCommands"
+        '(:|commands| (
+            (
+                :|command| "start"
+                :|description| "Перезапустить бота." 
+            )
+        ))))

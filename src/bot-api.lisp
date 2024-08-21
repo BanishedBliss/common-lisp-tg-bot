@@ -105,3 +105,12 @@
 		;; Log errors collected
 		(log-data 
             (format nil "~{Error: ~S - ~S - ~S~^~%~}" error-entries))))
+
+(defun send-json-to-route (route json-plist)
+	"Posts JSON to the provided bot API route.
+	 Recevies a route string and a plist compatiable with jonathan json lib."
+	(drakma:http-request
+            (get-api-url route)
+            :method :post
+            :content (jonathan:to-json json-plist)
+            :content-type "application/json"))
