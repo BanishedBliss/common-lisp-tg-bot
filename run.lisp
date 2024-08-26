@@ -1,5 +1,5 @@
 (pushnew (uiop:getcwd) ql:*local-project-directories*)
-(ql:quickload '(:jonathan :drakma))
+(ql:quickload '(:jonathan :drakma :mito))
 (asdf:load-asd "tg-bot-api.asd")
 (ql:quickload :tg-bot-api)
 (in-package :tg-bot-api)

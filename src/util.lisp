@@ -42,6 +42,45 @@
     "Writes data to log"
     (prin1 data))
 
+(defun init-user (user-id)
+    "Finds or creates a user record in DB, resets their dialog state."
+    (let ((db-user (mito:find-dao 'user :user-id user-id)))
+        (if db-user
+            (progn 
+                (setf (slot-value db-user 'dialog-branch) "initial")
+                (setf (slot-value db-user 'dialog-layer) nil)
+                (setf (slot-value db-user 'dialog-page) nil)
+                (setf (slot-value db-user 'dialog-data) nil)
+                (mito:delete-by-values 'person-info :creator-id user-id))
+            (setf db-user (mito:create-dao 'user 
+                                :user-id user-id 
+                                :dialog-branch "initial")))
+        db-user))
+
+(defun get-current-user ()
+    (mito:find-dao 'user 
+        :user-id (getf *current-user* :|id|)))
+
+(defun get-chat-id (update-plist)
+    (getf (getf update-plist :|chat|) :|id|))
+
+(defun text-back (text)
+    "Sends plain text to the current update's chat.
+     Does not reply to the actual message received."
+	(send-json-to-route "sendMessage"
+        `(:|text| ,text 
+          :|chat_id| ,(write-to-string 
+                            (getf (getf *current-update*  
+                                                :|chat|) 
+                                                :|id|)))))
+
+(defun send-message (chat-id text &optional (parameters nil))
+    "Receives chat-id and text for message. 
+     Also receives parameters plist, containing fields in sendMessage API reference."
+    (send-json-to-route "sendMessage"
+        (merge-plist `(:|chat_id| ,chat-id :|text| ,text) 
+                      parameters)))
+
 
 #|    Rest   |#
 
@@ -54,11 +93,10 @@
                 (push indicator p2)))
     p2)
 
-#| 
+
 (defun path-from-app-root (path)
     "Get absolute path from the application's root directory.
      Path parameter should be a strings with a trailing slash, i.e. src/www/"
     (asdf:system-relative-pathname
-        "hunch-test-bot"
+        "tg-bot-api"
         path))
-|#

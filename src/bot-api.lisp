@@ -2,6 +2,7 @@
 
 (setf drakma:*drakma-default-external-format* :UTF8)
 (defparameter *current-update* nil)
+(defparameter *current-user* nil)
 
 (defun long-poll-updates ()
     "Top-level loop. Repeatedly sends requests to get updates for a given bot."
@@ -84,9 +85,11 @@
             :in updates-list
 			:do (push update-id updates-ids)
 	        :do (setf *current-update* update-plist)
+			:do (setf *current-user* (getf update-plist :|from|))
             :do (eval-update-hooks update-type update-plist))
 		
         (setf *current-update* nil)
+		(setf *current-user* nil)
         (first updates-ids)))
 
 (defun log-errors (response-plist)

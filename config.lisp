@@ -4,6 +4,11 @@
 
 (defparameter *env* `(
         (:bot-api-key "7362297110:AAGh9fcnM8j-VMQ-zUF1dRkgy1tcSww1O7U")
+        (:db-connection :mysql)
+        (:mysql-host "MySQL-8.2")
+        (:mysql-db-name "tg_bot_api")
+        (:mysql-user "root")
+        (:mysql-password "")
     )
 )
 
@@ -20,3 +25,6 @@
                 :|description| "Перезапустить бота." 
             )
         ))))
+
+(defun migrations-wildpath ()
+    (merge-pathnames (path-from-app-root "src/database/migrations/") "*.lisp"))
