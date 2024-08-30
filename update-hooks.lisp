@@ -1,53 +1,52 @@
 ;;; Contains hooks registration
 (in-package :tg-bot-api)
 
-(defmethod on-command (update-plist (command (eql :start))
-                                    text)
+(defclass command-start (command-input) ())
+(defmethod on-command ((command command-start))
     "Receives '/start' command. 
      Resets dialog state, erases user data. Sends initial dialog options"
-    (declare (ignorable text))
     (branch-initial 
-        (init-user (getf *current-user* :|id|))
-        update-plist))
+        (db-util:init-user(getf update:*current-user* :|id|))
+        (update-plist command)))
 
 (defmethod on-message (update-plist text)
-    (format t "Dialog state: ~A~%" (slot-value (get-current-user) 'dialog-branch))
+    (format t "Dialog state: ~A~%" (slot-value update:*user-db* 'dialog-branch))
     (print "Message received:")
     (prin1 text)
-    (let ((current-user (get-current-user)))
-        (alexandria:switch ((slot-value current-user 'dialog-branch) 
-                            :test #'equal)
-            ("initial"  (response-initial current-user update-plist text))
-            ("generate" (response-generate current-user update-plist text))
-            ("interact" (response-interact current-user update-plist text)))))
+    
+    (alexandria:switch ((slot-value update:*user-db* 'dialog-branch) 
+                        :test #'equal)
+        ("initial"  (response-initial update-plist text))
+        ("generate" (response-generate update-plist text))
+        ("interact" (response-interact update-plist text))))
 
-(defun response-initial (current-user update-plist text)
+(defun response-initial (update-plist text)
     (alexandria:switch (text :test #'equal)
         ("Сгенерировать шаблонные документы"
-            (branch-initial-generate current-user update-plist))
+            (branch-initial-generate update-plist))
         ("Взаимодействовать с сервисом в интернете"
-            (branch-initial-interact current-user update-plist))))
+            (branch-initial-interact update-plist))))
 
-(defun response-generate (current-user update-plist text)
-    (if (slot-value current-user 'dialog-layer)
-        (if (slot-value current-user 'dialog-data)
+(defun response-generate (update-plist text)
+    (if (slot-value update:*user-db* 'dialog-layer)
+        (if (slot-value update:*user-db* 'dialog-data)
             (alexandria:switch (text :test #'equal)
                 ("Отмена"
                     ( ))))
         (alexandria:switch (text :test #'equal)
             ("Назад"
-                (branch-initial current-user update-plist)))))
+                (branch-initial update-plist)))))
 
-(defun response-interact (current-user update-plist text)
+(defun response-interact (update-plist text)
     (alexandria:switch (text :test #'equal)
         ("Назад"
-            (branch-initial current-user update-plist))))
+            (branch-initial update-plist))))
 
-(defun branch-initial (current-user update-plist)
-    (setf (slot-value current-user 'dialog-branch) "initial")
-    (mito:save-dao current-user)
+(defun branch-initial (update-plist)
+    (setf (slot-value update:*user-db* 'dialog-branch) "initial")
+    (mito:save-dao update:*user-db*)
 
-    (send-message (get-chat-id update-plist)
+    (api:send-message (api:get-chat-id)
                   (format nil "Этот бот может сгенерировать сразу несколько шаблонных документов ~
                                для группы людей, подставив их данные в необходимые места.~%~@
                                Он также может взаимодействовать с другими приложениями, сервисами и ~
@@ -59,13 +58,13 @@
                             ((:|text| "Взаимодействовать с сервисом в интернете")))
                         :|resize_keyboard| t))))
 
-(defun branch-initial-generate (current-user update-plist)
-    (setf (slot-value current-user 'dialog-branch) "generate")
-    (setf (slot-value current-user 'dialog-layer) nil)
-    (setf (slot-value current-user 'dialog-page) nil)
-    (mito:save-dao current-user)
+(defun branch-initial-generate (update-plist)
+    (setf (slot-value update:*user-db* 'dialog-branch) "generate")
+    (setf (slot-value update:*user-db* 'dialog-layer) nil)
+    (setf (slot-value update:*user-db* 'dialog-page) nil)
+    (mito:save-dao update:*user-db*)
 
-    (send-message (get-chat-id update-plist)
+    (api:send-message (api:get-chat-id)
                   (format nil "Для генерации шаблонных документов нужно добавить тестовые данные людей.~@
                                Если Вы этого ещё не сделали или хотите отредактировать их список, ~
                                выберите соответствующую опцию на данном этапе.")
@@ -76,13 +75,13 @@
                             ((:|text| "Назад")))
                         :|resize_keyboard| t))))
 
-(defun branch-initial-interact (current-user update-plist)
-    (setf (slot-value current-user 'dialog-branch) "interact")
-    (setf (slot-value current-user 'dialog-layer) nil)
-    (setf (slot-value current-user 'dialog-page) nil)
-    (mito:save-dao current-user)
+(defun branch-initial-interact (update-plist)
+    (setf (slot-value update:*user-db* 'dialog-branch) "interact")
+    (setf (slot-value update:*user-db* 'dialog-layer) nil)
+    (setf (slot-value update:*user-db* 'dialog-page) nil)
+    (mito:save-dao update:*user-db*)
 
-    (send-message (get-chat-id update-plist)
+    (api:send-message (api:get-chat-id)
                     (format nil "Для взаимодействия с сервисом в интернете нужно добавить тестовые данные людей.~@
                                 Если Вы этого ещё не сделали или хотите отредактировать их список, ~
                                 выберите соответствующую опцию на данном этапе.")
@@ -93,13 +92,13 @@
                             ((:|text| "Назад")))
                         :|resize_keyboard| t))))
 
-(defun branch-data-list (current-user update-plist)
-    (setf (slot-value current-user 'dialog-layer) "data")
-    (setf (slot-value current-user 'dialog-page) 1)
-    (setf (slot-value current-user 'dialog-data) nil)
-    (mito:save-dao current-user)
+(defun branch-data-list (user update-plist)
+    (setf (slot-value update:*user-db* 'dialog-layer) "data")
+    (setf (slot-value update:*user-db* 'dialog-page) 1)
+    (setf (slot-value update:*user-db* 'dialog-data) nil)
+    (mito:save-dao update:*user-db*)
     
-    (send-message (get-chat-id update-plist)
+    (api:send-message (api:get-chat-id)
                     (format nil "На этапе добавления тестовых данных Вы можете добавить тестовые данные ~
                                  человека и редактировать их. ~%~%Список добавленных людей отобразится под ~
                                  данным сообщением. ~%~%Внимание! Не используйте реальные данные людей! ~

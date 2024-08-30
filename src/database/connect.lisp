@@ -2,13 +2,13 @@
 
 (defun connect-to-db ()
 	"Connects the app to database via mito. Loads tables and runs migrations."
-	(case (get-env :db-connection)
+	(case (env:get-env :db-connection)
 		(:mysql
 			(mito:connect-toplevel :mysql
-					   :host (get-env :mysql-host)
-                       :database-name (get-env :mysql-db-name)
-                       :username (get-env :mysql-user)
-                       :password (get-env :mysql-password))))
+					   :host (env:get-env :mysql-host)
+                       :database-name (env:get-env :mysql-db-name)
+                       :username (env:get-env :mysql-user)
+                       :password (env:get-env :mysql-password))))
 	
 	(load-tables)
 	(run-new-migrations))

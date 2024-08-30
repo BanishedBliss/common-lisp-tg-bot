@@ -2,7 +2,7 @@
 
 (defun main ()
     "Main entry point for the Telegram Bot server."
-    (load-config)
+    (env:load-config)
     (connect-to-db)
     (set-my-commands)
     (long-poll-updates)

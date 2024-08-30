@@ -9,6 +9,8 @@
         (:mysql-db-name "tg_bot_api")
         (:mysql-user "root")
         (:mysql-password "")
+        (:people-data-per-page 5)
+        (:max-people-data-per-user 10)
     )
 )
 
@@ -18,7 +20,7 @@
 |#
 
 (defun set-my-commands () 
-    (send-json-to-route "setMyCommands"
+    (api:send-json-to-route "setMyCommands"
         '(:|commands| (
             (
                 :|command| "start"
@@ -27,4 +29,4 @@
         ))))
 
 (defun migrations-wildpath ()
-    (merge-pathnames (path-from-app-root "src/database/migrations/") "*.lisp"))
+    (merge-pathnames (util:path-from-app-root "src/database/migrations/") "*.lisp"))
