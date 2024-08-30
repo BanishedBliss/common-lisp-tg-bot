@@ -4,3 +4,6 @@
 (ql:quickload :tg-bot-api)
 (in-package :tg-bot-api)
 (main)
+
+; sudo apt-get install libssl-dev
+; http://www.slproweb.com/products/Win32OpenSSL.html
