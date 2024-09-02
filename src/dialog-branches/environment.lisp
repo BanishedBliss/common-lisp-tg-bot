@@ -7,10 +7,9 @@
 
 (defmethod on-message ((message message-input))
 	
-	(let ((input-branch (make-instance (slot-value *dialog-state-db* 'branch)))
+	(let ((input-branch 
+			(make-instance (slot-value *dialog-state-db* 'branch)))
 		)))
-
-(defmethod get)
 
 #| Branch Initial |#
 
@@ -28,17 +27,3 @@
 		:action (:next-branch 'branch-generate)))
 	  ((:text "Взаимодействовать с сервисом в интернете" 
 		:action (:next-branch 'branch-interact)))))
-
-(defmethod get-reply-buttons ((branch dialog-branch))
-	"Extracts buttons from reply options of a branch"
-	(let (buttons-markup)
-		(loop with row-markup = nil
-			  for row in (reply-options branch)
-			  do (loop for col in row
-			  		do (push (list :|text| (getf row :text)) 
-						  	 row-markup))
-			  do (push (reverse row-markup) buttons-markup))
-		buttons-markup))
-
-(defmethod reply-markup ((branch branch-initial))
-	(keyboard-markup-rs get-reply-buttons))
