@@ -13,7 +13,7 @@
 	(mito:deftable dialog-state ()
 		((user-id :references (user id))
 		 (branch :col-type (:varchar 128) :initform "branch-initial")
-		 (breadcrumbs :col-type (:varchar 128) :initform "")  ;; watch out for breadcrumbs length
+		 (breadcrumbs-stack :col-type (:varchar 128) :initform "")  ;; watch out for breadcrumbs length
 		 (people-data-offset :col-type :integer :initform 0)))
 
 	(mito:deftable person-data-temp ()
@@ -25,7 +25,7 @@
 	(mito:deftable person-data ()
 		((id :col-type :unsigned
 			 :primary-key t)
-		 (creator-id :references (user id))
+		 (user-id :references (user id))
 		 (last-name :col-type (:varchar 128))
 		 (first-name :col-type (:varchar 128))
 		 (middle-name :col-type (:varchar 128) :initform "")

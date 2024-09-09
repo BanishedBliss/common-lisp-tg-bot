@@ -1,4 +1,11 @@
+;;; Contents:
+;;; 1. Main class
+;;; 2. Child classes
+
 (in-package :tg-bot-api)
+
+
+#| Main class |#
 
 (defclass reply-markup-type () ())
 (defmethod initialize-instance :after ((markup reply-markup-type))
@@ -29,11 +36,16 @@
 		buttons-markup))
 
 
-#| Markup Types |#
+#| Child classes |#
 
 (defclass keyboard-markup-rs (reply-markup-type) ()) 
-
 (defmethod compile-reply-markup ((markup keyboard-markup-rs) reply-options)
 	``(:|reply_markup| (
 		:|keyboard| ,(get-reply-buttons reply-options)
 		:|resize_keyboard| t)))
+
+(defclass inline-markup (reply-markup-type) ())
+(defmethod compile-reply-markup ((markup inline-markup) reply-options)
+	``(:|reply_markup| (
+		:|inline_keyboard| ,(get-reply-buttons reply-options)
+	)))

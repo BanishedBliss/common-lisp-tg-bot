@@ -41,19 +41,19 @@
 
 #| Constructors |#
 
-(defun make-callback-chain (user callback-plist)
+(defun make-callback-chain (user-obj callback-plist)
 	(make-instance 'dialog-input 
-				   :user user 
-				   :bot-message-id (get-bot-dialog-message callback-plist)
-				   :input (make-instance 'dialog-keyboard-callback 
-								 		 :data (getf callback-plist :|data|))))
+				   'user user-obj 
+				   'bot-message-id (get-bot-dialog-message callback-plist)
+				   'input (make-instance 'dialog-keyboard-callback 
+								 		 'data (getf callback-plist :|data|))))
 
-(defun make-text-chain (user message-plist)
+(defun make-text-chain (user-obj message-plist)
 	(make-instance 'dialog-input 
-				   :user user
-				   :bot-message-id (mito:) 							;; TODO
-				   :input (make-instance 'dialog-keyboard-button 
-				   						 :text (getf message-plist :|text|)))) 
+				   'user user
+				   'bot-message-id (mito:) 							;; TODO
+				   'input (make-instance 'dialog-keyboard-button 
+				   						 'text (getf message-plist :|text|)))) 
 
 (defun get-bot-dialog-message (callback-plist)
 	(let ((may-be-inaccessible-message (getf callback-plist :|message|)))

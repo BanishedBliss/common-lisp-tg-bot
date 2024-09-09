@@ -5,7 +5,7 @@
 (defmethod eval-update-hooks ((update-type (eql :|callback_query|))
 							   update-plist)
 	"Evaluates updates of CallbackQuery type."
-	(let ((dialog-input (make-instance 'callback-input :update-plist update-plist)))
+	(let ((dialog-input (make-instance 'callback-input 'update-plist update-plist)))
 		(or (read-input-keyboard-button dialog-input))))
 
 ;; TODO: Replace change-class with type checks

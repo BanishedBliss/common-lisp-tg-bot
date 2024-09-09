@@ -22,4 +22,4 @@
 		 (setf (slot-value update:*dialog-state-db* 'breadcrumbs) "")
 		 (setf (slot-value update:*dialog-state-db* 'people-data-offset) 0)
 		 (mito:save-dao update:*dialog-state-db*))
-	(mito:delete-by-values 'person-info :creator-id (slot-value update:*user-db* 'id))) 
+	(mito:delete-by-values 'person-info :user-id (slot-value update:*user-db* 'id))) 

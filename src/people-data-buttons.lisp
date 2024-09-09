@@ -4,9 +4,9 @@
 		   (people-per-page 			(env:get-env :people-data-per-page))
 		   (people-per-user				(env:get-env :max-people-data-per-user))
 		   (people-data-count 			(mito:count-dao 'person-data
-											(where (:= :creator-id (slot-value update:*user-db* 'id)))))
+											(where (:= :user-id (slot-value update:*user-db* 'id)))))
 		   (people-data 				(mito:select-dao 'person-data
-											(where (:= :creator-id (slot-value update:*user-db* 'id)))
+											(where (:= :user-id (slot-value update:*user-db* 'id)))
 											(limit people-per-page)
 											(offset people-data-offset-value))))
 		;; Add aquired people data to menu and append nav buttons
