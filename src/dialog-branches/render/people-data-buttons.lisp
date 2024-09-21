@@ -1,4 +1,4 @@
-(defun people-data-page-renderer ()
+(defun people-data-page-render ()
 	;; Aquire necessary information for the menu
 	(let* ((people-data-offset-value  	(slot-value update:*dialog-state-db* 'people-data-offset))
 		   (people-per-page 			(env:get-env :people-data-per-page))
@@ -30,7 +30,7 @@
 										(when (< (- people-data-count 
 													people-data-offset-value) 
 												 people-per-page)
-											(push (get-next-button )))
+											(push (get-next-button)))
 										;; Render and return people menu
 										(t 	(if nav-buttons 
 												(push (list nav-buttons) 

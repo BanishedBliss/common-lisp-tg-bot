@@ -104,7 +104,7 @@
             (if (null returned-branch-list)
                 (cdr branch-list)
                 (cons returned-branch-list (rest branch-list))))
-        (case 
+        (cond
             ((< 0 depth)
                 (setf (class-string bcrubms-prev-branch) (car branch-list))
                 (cdr branch-list))

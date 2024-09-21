@@ -86,7 +86,7 @@
 	(make-instance 'inline-markup))
 
 (defmethod reply-options ((branch branch-people-data))
-	`(,(people-data-page-renderer)
+	`(,(people-data-page-render)
 	  ((:text "Назад"
 	   	:action (:back))
 	   (:text "Добавить"
@@ -108,7 +108,7 @@
 		:action (:back)))))
 
 (defmethod read-user-message ((branch branch-person-data-last-name))
-	(case 
+	(cond 
 		((string= (update:message-text) "")
 			(api:text-back "Необходимо ввести фамилию!"))
 		(t 
@@ -136,7 +136,7 @@
 	  	:action (:cancel)))))
 
 (defmethod read-user-message ((branch branch-person-data-first-name))
-	(case
+	(cond
 		((string= (update:message-text) "")
 			(api:text-back "Необходимо ввести имя!"))
 		(t
@@ -182,7 +182,11 @@
 	(make-instance 'inline-markup))
 
 (defmethod reply-options ((branch branch-person-data-dob))
-	'(((:text "Назад"))))
+	`(,(date-data-page-render)
+	  ((:text "Назад"
+		:action (:back)))
+	  ((:text "Отменить ввод данных"
+	  	:action (:cancel)))))
 
 
 #| Branch Interact Finish |#
@@ -190,7 +194,7 @@
 (defclass branch-interact-finish (dialog-branch) ())
 
 (defmethod branch-message ((branch branch-interact-finish))
-	(format nil ""))
+	(format nil ""))		; TODO
 
 (defmethod reply-options ((branch branch-interact-finish))
 	'(((:text "В начало"
@@ -202,7 +206,7 @@
 (defclass branch-generate-finish (dialog-branch) ())
 
 (defmethod branch-message ((branch branch-generate-finish))
-	(format nil ""))
+	(format nil ""))		; TODO
 
 (defmethod reply-options ((branch branch-generate-finish))
 	'(((:text "В начало"

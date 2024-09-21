@@ -120,7 +120,7 @@
 		  :has-home t)
 	(:key :|people-data| 
 		  :link-type :|inline|
-		  :links (list `(:key :|people-data-page| :multiple (people-data-page-renderer)))
+		  :links (list `(:key :|people-data-page| :multiple (people-data-page-render)))
 		  :has-back t
 		  :back-text "Save and return")
 	(:key :|person-data-last-name|

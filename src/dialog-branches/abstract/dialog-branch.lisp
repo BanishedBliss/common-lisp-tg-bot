@@ -62,7 +62,7 @@
 	`(let (found-action) 
 		(loop for row in (reply-options branch)
 			  do (loop for button in row
-					   when ,(case 
+					   when ,(cond 
 					   			((eql look-by :text) 
 									'(string= (getf button :text) update:message-text))
 								((eql look-by :data)
