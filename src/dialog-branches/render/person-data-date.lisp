@@ -45,7 +45,7 @@
         (list 
             (list :key "select-year"
                   :text "Выбор года")
-            (list :key "null"
+            (list :key "select-year"
                   :text (format nil "~A" selected-year)))
         (list
             (list :key "month-jan"
@@ -76,5 +76,37 @@
             (list :key "month-dec"
                   :text "Декабрь"))))
 
-(defun day-select-page ()
-    )
+(defun day-select-page (selected-year selected-month)
+      (append
+            (list 
+                  (list 
+                        (list :key "select-year"
+                              :text (format nil "~A" selected-year))
+                        (list :key "select-month"
+                              :text (format nil "~A" selected-month))))
+            (loop with days-list
+                  with button-row 
+                  for day-num from 1 to (get-month-days-count selected-year selected-month)
+                  do (push (day-button-format day-num)
+                        button-row)
+                  when (= 7 (length button-row))
+                        do (push button-row days-list)
+                  finally (return (reverse (append days-list button-row))))))
+
+(defun day-button-format (day-num)
+      (list :key (format nil "day-~A" day-num)
+            :text (format nil "~A" day-num)))
+
+(defun get-month-days-count (selected-year selected-month) 
+      "Gets an amount of days in a given month of a given year"
+      (cond
+            ((not (null (position selected-month 
+                              (list "Январь" "Март" "Май" "Июль" "Август" "Октябрь" "Декабрь"))))
+                  31)
+            ((not (null (position selected-month
+                              (list "Апрель" "Июнь" "Сентябрь" "Ноябрь"))))
+                  30)
+            ((string= selected-month "Февраль")
+                  (if (= (rem selected-year 4) 0)
+                        29
+                        28))))
