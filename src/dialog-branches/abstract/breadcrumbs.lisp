@@ -18,7 +18,7 @@
     "Saves breadcrumbs stack to dialog state in DB."
     (setf (slot-value update:*dialog-state-db* 'breadcrumbs-stack) (branch-stack bcrumbs)))
 
-(defmethod add-next-branch ((next-branch dialog-branch))
+(defmethod add-next-branch ((next-branch dialog-branch) &key (is-chain-start nil))
     "Adds next branch to the breadcrumbs stack. 
      If branch already in stack, removes all the following branches to 
      keep breadcrumbs concise."
@@ -28,7 +28,7 @@
         (setf (branch-stack bcrumbs) (loop-next-branch (branch-stack bcrumbs) next-branch))
         (and (null (next-branch-in-past bcrumbs))
              (setf (branch-stack bcrumbs) 
-                   (add-branch-deep (branch-stack bcrumbs) next-branch)))
+                   (add-branch-deep (branch-stack bcrumbs) next-branch is-chain-start)))
         (save-breadcrumbs bcrumbs)))
 
 (defmethod loop-next-branch (bcrumbs-list (next-branch bcrumbs-next-branch))
@@ -47,13 +47,15 @@
                 do (return bcrumbs-list)
           finally (return bcrumbs-list)))
 
-(defmethod add-branch-deep (bcrumbs-list (next-branch bcrumbs-next-branch)) 
+(defmethod add-branch-deep (bcrumbs-list (next-branch bcrumbs-next-branch) &optional (is-chain-start nil)) 
     "Loops in branch stack in search of first deepest dialog chain and 
      appends next branch to the stack."
     (let ((first-element (first bcrumbs-list)))
         (if (listp first-element)
             (setf bcrumbs-list (add-branch-deep first-element next-branch))
-            (push (class-string next-branch) bcrumbs-list))
+            (if is-chain-start
+                (push (list (class-string next-branch)) bcrumbs-list)
+                (push (class-string next-branch) bcrumbs-list)))
         bcrumbs-list))
 
 (defun close-chain ()

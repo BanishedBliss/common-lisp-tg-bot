@@ -3,6 +3,7 @@
 (defclass option-action () ((params :initarg params :accessor action-params)))
     (defclass action-next-branch (option-action) ())
         (defclass action-finish-next (action-next-branch) ())
+    (defclass action-next-chain (option-action) ())
     (defclass action-back (option-action) ())
     (defclass action-cancel (option-action) ())
 
@@ -32,6 +33,10 @@
     ;(branch-prerender-actions (next-branch-obj action))
     (update-user-dialog (next-branch-obj action))
     (add-next-branch (next-branch-obj action)))
+
+(defmethod run-action ((action action-next-chain))
+    (update-user-dialog (next-branch-obj action)
+    (add-next-branch (next-branch-obj action) :is-chain-start t)))
 
 (defmethod run-action ((action action-back))
     (update-user-dialog (make-instance (find-class (previous-branch-string)))))
