@@ -1,4 +1,4 @@
-(defclass dialog-input () (update-plist :initarg update-plist :accessor update-plist))
+(defclass dialog-input () ((update-plist :initarg update-plist :accessor update-plist)))
 	(defclass message-input (dialog-input) ())
 		(defclass command-input (message-input) 
 			((name :initarg name :accessor command-name) 

@@ -1,5 +1,12 @@
 (in-package :tg-bot-api)
 
+#| 
+1. Main long poll loop
+2. Response state actions
+3. Response integrity checks
+4. Failsafe for unsupported update type
+|#
+
 #| Main long poll loop |#
 
 (setf drakma:*drakma-default-external-format* :UTF8)
@@ -8,12 +15,12 @@
     "Top-level loop. Repeatedly sends requests to get updates for a given bot."
     ; Sets a variable for storing the last processed updates's ID.
     (let ((offset 0)) (loop
-        (let* ((api-answer   (api:get-updates-request offset))
-               (response-plist (jonathan:parse 
-                             	(flexi-streams:octets-to-string 
-									api-answer))))
+        (let* ((api-answer   	(api:get-updates-request offset))
+               (response-plist 	(jonathan:parse 
+                             		(flexi-streams:octets-to-string 
+										api-answer))))
 
-            (print "Parsed plist:")
+            (print "Parsed plist:")	; TODO: Remove debug code.
             (prin1 response-plist)
 
             ;; Validate response integrity and look for any results.
@@ -28,9 +35,11 @@
                         (1+ (getf response-data :last-update-id)))))))))
 
 
+
 #| Response state actions |#
 
-(defmethod response-state-action ((state response-has-results) response-plist)
+(defmethod response-state-action 
+	((state response-has-results) response-plist)
 	"Apropriate action for response with results"
 	"Evaluates individual updates' hooks and finds the last update's ID"
 	(let ((updates-list (getf response-plist :|result|))
@@ -47,11 +56,13 @@
 		(setf (last-update-id state) 
 		      (first updates-ids))))
 
-(defmethod response-state-action ((state response-no-results) response-plist)
+(defmethod response-state-action 
+	((state response-no-results) response-plist)
 	"Apropriate action for response with no results."
 	(srv-util:log-data "No results received."))
 
-(defmethod response-state-action ((state response-not-ok) response-plist)
+(defmethod response-state-action 
+	((state response-not-ok) response-plist)
 	"Apropriate action for response with OK value 'false'.
 	 Collects errors received in JSON, formats and logs them."
 	(let* ((error-entries '())
@@ -69,9 +80,11 @@
 		(srv-util:log-data 
             (format nil "~{Error: ~S - ~S - ~S~^~%~}" error-entries))))
 
-(defmethod response-state-action ((state malformed-response) response-plist)
+(defmethod response-state-action 
+	((state malformed-response) response-plist)
 	"Apropriate action for response with no OK value received."
 	(srv-util:log-data "Received malformed JSON-response while long polling."))
+
 
 
 #| Response integrity checks |#
@@ -88,6 +101,7 @@
 	(and (listp result-value)
 		 (< 0 (length result-value)
 		 (change-class state 'response-has-results))))
+
 
 
 #| Failsafe for unsupported update type |#
