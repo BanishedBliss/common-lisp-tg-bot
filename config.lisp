@@ -3,7 +3,7 @@
 (in-package :tg-bot-api)
 
 (defparameter *env* `(
-        (:bot-api-key "7362297110:AAGh9fcnM8j-VMQ-zUF1dRkgy1tcSww1O7U")
+        (:bot-api-key "7362297110:AAGh9fcnM8j-VMQ-zUF1dRkgy1tcSww1O7U") ; I know, I just don't care enough.
         (:db-connection :mysql)
         (:mysql-host "MySQL-8.2")
         (:mysql-db-name "tg_bot_api")
